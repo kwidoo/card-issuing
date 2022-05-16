@@ -4,6 +4,7 @@ namespace Kwidoo\CardIssuing\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Kwidoo\CardIssuing\Contracts\Card as ContractsCard;
 use Kwidoo\CardIssuing\Models\Card;
 
 trait BelongsToCard
@@ -19,11 +20,11 @@ trait BelongsToCard
 
     /**
      * @param Builder $query
-     * @param Card $cardModel
+     * @param ContractsCard $cardModel
      *
      * @return void
      */
-    public function scopeByCard(Builder $query, $cardModel): void
+    public function scopeByCard(Builder $query, ContractsCard $cardModel): void
     {
         $query->where(config('card-issuing.card_foreign_key'), $cardModel->id);
     }

@@ -4,7 +4,7 @@ namespace Kwidoo\CardIssuing\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Kwidoo\CardIssuing\Models\Transaction;
+use Kwidoo\CardIssuing\Contracts\Transaction;
 
 trait HasTransactions
 {
@@ -13,8 +13,9 @@ trait HasTransactions
      */
     public function transactions(): HasMany
     {
+        /** @var string */
         $transactionModel = config('card-issuing.transaction_model', 'Kwidoo\CardIssuing\Models\Transaction');
-        return $this->hasMany($transactionModel, config('card-issuing.transaction_foreign_key'));
+        return $this->hasMany($transactionModel, config('card-issuing.card_foreign_key'));
     }
 
     /**
@@ -23,7 +24,7 @@ trait HasTransactions
      *
      * @return void
      */
-    public function scopeByTransaction(Builder $query, $transactionModel): void
+    public function scopeByTransaction(Builder $query, Transaction $transactionModel): void
     {
         $query->whereHas('transactions', function (Builder $query) use ($transactionModel) {
             $query->where(implode('.', [

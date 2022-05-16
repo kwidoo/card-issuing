@@ -12,7 +12,7 @@ return [
     |
     | This setting defines which model will be used to store the card holder
     */
-    'card_holder_model' => 'App\Models\User',
+    'cardholder_model' => 'App\Models\User',
 
     /*
     |--------------------------------------------------------------------------
@@ -21,7 +21,7 @@ return [
     |
     | This setting defines which column to store Stripe Card Holder Id
     */
-    'card_holder_column' => 'card_holder_id',
+    'cardholder_column' => 'cardholder_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ return [
     |
     | This setting defines which model will be used to store the card holder
     */
-    'card_holder_foreign_key' => 'user_id',
+    'cardholder_foreign_key' => 'user_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -58,5 +58,7 @@ return [
     | This setting defines which column will be used to store the transactions card
     */
     'card_foreign_key' => 'card_id',
+
+    'card_default_currency' => 'gbp',
 
 ];

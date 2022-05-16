@@ -3,6 +3,8 @@
 namespace Kwidoo\CardIssuing;
 
 use Illuminate\Support\ServiceProvider;
+use Kwidoo\CardIssuing\Models\Card;
+use Kwidoo\CardIssuing\Observers\CardObserver;
 
 class CardIssuingServiceProvider extends ServiceProvider
 {
@@ -42,6 +44,7 @@ class CardIssuingServiceProvider extends ServiceProvider
             // Registering package commands.
             // $this->commands([]);
         }
+        Card::observe(CardObserver::class);
     }
 
     /**

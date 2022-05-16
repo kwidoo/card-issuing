@@ -13,10 +13,13 @@ class AddCardHolderToUsersTable extends Migration
      */
     public function up()
     {
-        $modelName = config('card-issuing.card_holder_model', 'App\User');
+        /** @var string */
+        $modelName = config('card-issuing.cardholder_model', 'App\User');
+        /** @var string */
         $tableName = (new $modelName)->getTable();
         Schema::table($tableName, function (Blueprint $table) {
-            $columnName = config('card-issuing.card_holder_column', 'card_holder_id');
+            /** @var string */
+            $columnName = config('card-issuing.cardholder_column', 'cardholder_id');
             $table->string($columnName)->nullable()->index();
         });
     }
@@ -28,10 +31,13 @@ class AddCardHolderToUsersTable extends Migration
      */
     public function down()
     {
-        $modelName = config('card-issuing.card_holder_model', 'App\User');
+        /** @var string */
+        $modelName = config('card-issuing.cardholder_model', 'App\User');
+        /** @var string */
         $tableName = (new $modelName)->getTable();
         Schema::table($tableName, function (Blueprint $table) {
-            $columnName = config('card-issuing.card_holder_column', 'card_holder_id');
+            /** @var string */
+            $columnName = config('card-issuing.cardholder_column', 'cardholder_id');
             $table->dropColumn($columnName);
         });
     }
