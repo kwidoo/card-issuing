@@ -4,7 +4,9 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/kwidoo/card-issuing.svg?style=flat-square)](https://packagist.org/packages/kwidoo/card-issuing)
 ![GitHub Actions](https://github.com/kwidoo/card-issuing/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+This package extends Laravel Cashier functionality with Card Issuing function. In order to use this functionality you should enable it on Stripe's end.
+
+Currently it is POC package, don't expect much of it.
 
 ## Installation
 
@@ -17,7 +19,7 @@ composer require kwidoo/card-issuing
 ## Usage
 
 ```php
-// Usage description here
+// To be described
 ```
 
 ### Testing
@@ -40,8 +42,8 @@ If you discover any security related issues, please email oleg@pashkovsky.me ins
 
 ## Credits
 
--   [Oleg Pashkovsky](https://github.com/kwidoo)
--   [All Contributors](../../contributors)
+- [Oleg Pashkovsky](https://github.com/kwidoo)
+- [All Contributors](../../contributors)
 
 ## License
 
