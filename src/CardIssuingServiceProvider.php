@@ -16,12 +16,12 @@ class CardIssuingServiceProvider extends ServiceProvider
          */
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'card-issuing');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'card-issuing');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('card-issuing.php'),
+                __DIR__ . '/../config/config.php' => config_path('card-issuing.php'),
             ], 'config');
 
             // Publishing the views.
@@ -50,7 +50,7 @@ class CardIssuingServiceProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'card-issuing');
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'card-issuing');
 
         // Register the main class to use with the facade
         $this->app->singleton('card-issuing', function () {
