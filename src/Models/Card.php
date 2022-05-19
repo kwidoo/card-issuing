@@ -40,15 +40,20 @@ class Card extends Model implements ContractsCard
         'status_replaced' => 'replacement_reason',
     ];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var string[]
+     */
     protected $fillable = [
         'user_id',
         'stripe_card_id',
-        'card_brand',
+        'brand',
         'cancellation_reason',
         'status',
         'type',
         'currency',
-        'last_four',
+        'last4',
         'exp_month',
         'exp_year',
     ];
@@ -66,7 +71,6 @@ class Card extends Model implements ContractsCard
         $cardholder = $model::byCardholder($stripeCard->cardholder)->first();
         $id = $stripeCard->id;
         unset($stripeCard->id);
-
         return static::updateOrCreate([
             'stripe_card_id' => $id,
         ], $stripeCard->toArray() + ['user_id' => $cardholder->id]);

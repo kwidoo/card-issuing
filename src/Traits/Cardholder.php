@@ -109,7 +109,7 @@ trait Cardholder
      *
      * @return array
      */
-    public function getCreateValidationRules(): array
+    protected function getCreateValidationRules(): array
     {
         return [
             'name' => 'required',

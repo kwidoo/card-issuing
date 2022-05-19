@@ -9,6 +9,8 @@ use Laravel\Cashier\Cashier;
 class CardObserver
 {
     /**
+     * Handle the Card "creating" event.
+     *
      * @param \Kwidoo\CardIssuing\Contracts\Card $card
      *
      * @return \Kwidoo\CardIssuing\Contracts\Card
@@ -30,6 +32,8 @@ class CardObserver
      *
      * @param \Kwidoo\CardIssuing\Contracts\Card  $card
      * @return void
+     *
+     * @todo Shipping address for Physical cards
      */
     public function created(ContractsCard $card): ContractsCard
     {
