@@ -1,4 +1,4 @@
-# Very short description of the package
+# Laravel Cashier extension for Stripe Card Issuing API
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/kwidoo/card-issuing.svg?style=flat-square)](https://packagist.org/packages/kwidoo/card-issuing)
 [![Total Downloads](https://img.shields.io/packagist/dt/kwidoo/card-issuing.svg?style=flat-square)](https://packagist.org/packages/kwidoo/card-issuing)
@@ -18,8 +18,42 @@ composer require kwidoo/card-issuing
 
 ## Usage
 
+### Prepare your model to use Card Issuing:
+
 ```php
-// To be described
+use Kwidoo\CashierCardIssuing\Contracts\Cardholder as ContractsCardholder;
+
+class User extends Authenticatable implements ContractsCardholder
+{
+    use ContractsCardholder;
+}
+```
+
+### Create Cardholder
+
+First you should create a cardholder on Stripe. Cardholder is a resource that represents a person or business that can be used to create cards.
+
+```php
+$user->createAsCardholder([
+    'phone_number' => '+11234567890',
+    'billing' =>
+    [
+        'address' => [
+            'line1' => '1 Main Street',
+            // 'line2' => , //uncomment if you have one
+            'city' => 'New York',
+            'state' => 'NY',
+            'postal_code' => '10001',
+            'country' => 'US',
+        ]
+    ]
+]);
+```
+
+The createAsCardholder() method uses validation rules defined in Cardholder traits getCreateValidationRules() method. You can override this method to change validation rules.
+
+```php
+
 ```
 
 ### Testing
