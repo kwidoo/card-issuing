@@ -30,6 +30,7 @@ class CreateCardsTable extends Migration
             $table->string('last4', 4)->nullable();
             $table->smallInteger('exp_month')->nullable();
             $table->smallInteger('exp_year')->nullable();
+            $table->json('shipping')->nullable();
             $table->timestamps();
         });
     }

@@ -1,15 +1,23 @@
 <?php
 
-namespace Kwidoo\CardIssuing\Traits;
+namespace Kwidoo\CardIssuing\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Kwidoo\CardIssuing\Exceptions\CardHolderAlreadyExists;
 use Kwidoo\CardIssuing\Exceptions\CardholderDataValidation;
+use Kwidoo\CardIssuing\Traits\ClassConstants;
+use Kwidoo\CardIssuing\Traits\HasCards;
+use Kwidoo\CardIssuing\Traits\SpendingControl;
 use Stripe\Issuing\Cardholder as IssuingCardholder;
 
 trait Cardholder
 {
+    use ClassConstants;
+    use HasCards;
+    use SpendingControl;
+
     /**
      * @param array $options
      *
@@ -28,17 +36,19 @@ trait Cardholder
             $options['name'] = $this->name;
         }
 
-        $validator = Validator::make($options, $this->getCreateValidationRules());
-        if ($validator->fails()) {
-            throw new CardholderDataValidation($validator->errors()->first());
+        if ($this->withValidation()) {
+            $validator = Validator::make($options, $this->getCardholderCreateRules());
+            if ($validator->fails()) {
+                throw new CardholderDataValidation($validator->errors()->first());
+            }
         }
 
         if (!array_key_exists('status', $options)) {
-            $options['status'] = 'active';
+            $options['status'] = constant('self::STATUS_ACTIVE');
         }
 
         if (!array_key_exists('type', $options)) {
-            $options['type'] = 'individual';
+            $options['type'] = constant('self::ACCOUNT_TYPE_INDIVIDUAL');
         }
 
         /** @var string */
@@ -86,6 +96,13 @@ trait Cardholder
         /** @var string */
         $columnName = config('card-issuing.cardholder_column');
 
+        if ($this->withValidation()) {
+            $validator = Validator::make($options, $this->getCardholderUpdateRules());
+            if ($validator->fails()) {
+                throw new CardholderDataValidation($validator->errors()->first());
+            }
+        }
+
         return $this->stripe()->issuing->cardholders->update(
             $this->$columnName,
             $options
@@ -102,28 +119,6 @@ trait Cardholder
         /** @var string */
         $columnName = config('card-issuing.cardholder_column');
         return $this->$columnName !== null;
-    }
-
-    /**
-     * Validation rules to validate Cardholder creation data
-     *
-     * @return array
-     */
-    public function getCreateValidationRules(): array
-    {
-        return [
-            'name' => 'required',
-            'email' => 'required|email',
-            'phone_number' => 'required',
-            'billing' => 'required|array',
-            'billing.address' => 'required|array',
-            'billing.address.line1' => 'required|string',
-            'billing.address.city' => 'required|string',
-            'billing.address.state' => 'sometimes|string',
-            'billing.address.postal_code' => 'required|string',
-            'billing.address.country' => 'required|string',
-            'type' => 'nullable|in:individual,company',
-        ];
     }
 
     /**
@@ -150,5 +145,54 @@ trait Cardholder
         /** @var string */
         $columnName = config('card-issuing.cardholder_column');
         $query->where($columnName, $id);
+    }
+
+    /**
+     * Should validation be skipped
+     *
+     * @return bool
+     */
+    protected function withValidation(): bool
+    {
+        return $this->stripeValidation ?? true;
+    }
+
+    /**
+     * Validation rules to validate Cardholder creation data
+     *
+     * @return array
+     */
+    protected function getCardholderCreateRules(): array
+    {
+        if (is_array($this->cardIssueValidationRules) && array_key_exists('cardholder_create', $this->cardIssueValidationRules)) {
+            return $this->cardIssueValidationRules['cardholder_create'];
+        }
+        $accountType = $this->getClassConstants('ACCOUNT_TYPE');
+        $status = $this->getClassConstants('STATUS');
+        return [
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone_number' => ['required', Rule::phone()->country(config('card-issuing.allowed_countries'))],
+            'billing' => 'required|array',
+            'billing.address' => 'required|array',
+            'billing.address.line1' => 'required|string',
+            'billing.address.city' => 'required|string',
+            'billing.address.state' => 'sometimes|string',
+            'billing.address.postal_code' => 'required|string',
+            'billing.address.country' => ['required', 'string', Rule::in(config('card-issuing.allowed_countries'))],
+            'type' => 'nullable|in:i' . $accountType->implode(','),
+            'status' => 'nullable|in:a' . $status->implode(','),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCardholderUpdateRules(): array
+    {
+        if (is_array($this->cardIssueValidationRules) && array_key_exists('cardholder_update', $this->cardIssueValidationRules)) {
+            return $this->cardIssueValidationRules['cardholder_update'];
+        }
+        return []; //@todo add update validation rules
     }
 }

@@ -1,4 +1,4 @@
-# Very short description of the package
+# Laravel Cashier extension for Stripe Card Issuing API
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/kwidoo/card-issuing.svg?style=flat-square)](https://packagist.org/packages/kwidoo/card-issuing)
 [![Total Downloads](https://img.shields.io/packagist/dt/kwidoo/card-issuing.svg?style=flat-square)](https://packagist.org/packages/kwidoo/card-issuing)
@@ -18,8 +18,77 @@ composer require kwidoo/card-issuing
 
 ## Usage
 
+### Prepare your model to use Card Issuing:
+
 ```php
-// To be described
+use Kwidoo\CashierCardIssuing\Contracts\Cardholder as ContractsCardholder;
+
+class User extends Authenticatable implements ContractsCardholder
+{
+    use ContractsCardholder;
+}
+```
+
+### Create Cardholder
+
+First you should create a cardholder on Stripe. Cardholder is a resource that represents a person or business that can be used to create cards.
+
+```php
+$user->createAsCardholder([
+    'phone_number' => '+11234567890',
+    'billing' =>
+    [
+        'address' => [
+            'line1' => '1 Main Street',
+            // 'line2' => , //uncomment if you have one
+            'city' => 'New York',
+            'state' => 'NY',
+            'postal_code' => '10001',
+            'country' => 'US',
+        ]
+    ]
+    'type' => User::ACCOUNT_TYPE_INDIVIDUAL,// optional
+    'status' => User::STATUS_ACTIVE, // optional
+]);
+```
+
+if $stripeValidation property is set to true (default), the createAsCardholder() method uses validation rules defined in Cardholder traits getCardholderCreateRules() method. If property is set to false validation rules will not be used, but Stripe will still validate the request.
+
+```php
+protected $stripeValidation = true;
+```
+
+You can override this method to change validation rules or you can add $cardIssueValidationRules property to User model. Array of rules under 'cardholder_create' key will be used.
+
+```php
+protected $cardIssueValidationRules = [
+    'cardholder_create' => [
+        'name' => 'required',
+        'email' => 'required|email',
+        'phone_number' => 'required',
+    ],
+    ...
+];
+```
+
+Physical card
+
+```php
+$user->cards()->create([
+    'type' => 'physical',
+    'shipping' =>
+    [
+        'name' => 'local',
+        'service'=>'standard',
+        'address' => [
+            'line1' => '1 Main Street',
+            // 'line2' => , //uncomment if you have one
+            'city' => 'New York',
+            'state' => 'NY',
+            'postal_code' => '10001',
+            'country' => 'GB',
+        ]
+    ]]);
 ```
 
 ### Testing

@@ -59,6 +59,7 @@ return [
     */
     'card_foreign_key' => 'card_id',
 
-    'card_default_currency' => 'gbp',
+    'card_default_currency' => 'GBP',
 
+    'allowed_countries' => 'LV, GB'
 ];

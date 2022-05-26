@@ -4,8 +4,8 @@ namespace Kwidoo\CardIssuing\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Kwidoo\CardIssuing\Contracts\Card as ContractsCard;
-use Kwidoo\CardIssuing\Models\Card;
+use Kwidoo\CardIssuing\Contracts\Card;
+use Kwidoo\CardIssuing\Services\CardFactory;
 
 trait HasCards
 {
@@ -25,7 +25,7 @@ trait HasCards
      *
      * @return void
      */
-    public function scopeByCard(Builder $query, ContractsCard $cardModel): void
+    public function scopeByCard(Builder $query, Card $cardModel): void
     {
         $query->whereHas('cards', function (Builder $query) use ($cardModel) {
             $query->where(implode('.', [
@@ -86,5 +86,10 @@ trait HasCards
             $cards[] = $cardModel::newFromStripe($stripeCard);
         }
         return $cards;
+    }
+
+    public function getCardsAttribute()
+    {
+        return new CardFactory($this->cards());
     }
 }
