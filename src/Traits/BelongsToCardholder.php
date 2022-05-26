@@ -14,7 +14,7 @@ trait BelongsToCardholder
     public function cardholder(): BelongsTo
     {
         $cardholder = config('card-issuing.cardholder_model', 'App\Models\User');
-        return $this->belongsTo($cardholder, config('card-issuing.cardholder_foreign_key'));
+        return $this->belongsTo($cardholder, config('card-issuing.cardholder_foreign_key', constant('self::CARDHOLDER_FOREIGN_KEY')));
     }
 
     /**
@@ -25,7 +25,7 @@ trait BelongsToCardholder
      */
     public function scopeByCardholder(Builder $query, Cardholder $cardholder): void
     {
-        $query->where(config('card-issuing.cardholder_foreign_key', 'user_id'), $cardholder->id);
+        $query->where(config('card-issuing.cardholder_foreign_key', constant('self::CARDHOLDER_FOREIGN_KEY')), $cardholder->id);
     }
 
     /**
@@ -34,8 +34,8 @@ trait BelongsToCardholder
      *
      * @return void
      */
-    public function scopeByUserId(Builder $query, int $id): void
+    public function scopeByCardholderId(Builder $query, int $id): void
     {
-        $query->where(config('card-issuing.cardholder_foreign_key', 'user_id'), $id);
+        $query->where(config('card-issuing.cardholder_foreign_key', constant('self::CARDHOLDER_FOREIGN_KEY')), $id);
     }
 }

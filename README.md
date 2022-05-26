@@ -47,13 +47,48 @@ $user->createAsCardholder([
             'country' => 'US',
         ]
     ]
+    'type' => User::ACCOUNT_TYPE_INDIVIDUAL,// optional
+    'status' => User::STATUS_ACTIVE, // optional
 ]);
 ```
 
-The createAsCardholder() method uses validation rules defined in Cardholder traits getCreateValidationRules() method. You can override this method to change validation rules.
+if $stripeValidation property is set to true (default), the createAsCardholder() method uses validation rules defined in Cardholder traits getCardholderCreateRules() method. If property is set to false validation rules will not be used, but Stripe will still validate the request.
 
 ```php
+protected $stripeValidation = true;
+```
 
+You can override this method to change validation rules or you can add $cardIssueValidationRules property to User model. Array of rules under 'cardholder_create' key will be used.
+
+```php
+protected $cardIssueValidationRules = [
+    'cardholder_create' => [
+        'name' => 'required',
+        'email' => 'required|email',
+        'phone_number' => 'required',
+    ],
+    ...
+];
+```
+
+Physical card
+
+```php
+$user->cards()->create([
+    'type' => 'physical',
+    'shipping' =>
+    [
+        'name' => 'local',
+        'service'=>'standard',
+        'address' => [
+            'line1' => '1 Main Street',
+            // 'line2' => , //uncomment if you have one
+            'city' => 'New York',
+            'state' => 'NY',
+            'postal_code' => '10001',
+            'country' => 'GB',
+        ]
+    ]]);
 ```
 
 ### Testing

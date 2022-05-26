@@ -61,4 +61,5 @@ return [
 
     'card_default_currency' => 'GBP',
 
+    'allowed_countries' => 'LV, GB'
 ];
