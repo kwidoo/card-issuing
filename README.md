@@ -71,15 +71,24 @@ protected $cardIssueValidationRules = [
 ];
 ```
 
-Physical card
+### Create Card
+
+Eloquent Way to create virtual card
+
+```php
+$user->cards()->create();
+```
+
+Eloquent Way to create physical card. Remember, Stripe requires name, shipping address and delivery service to be set.
 
 ```php
 $user->cards()->create([
     'type' => 'physical',
     'shipping' =>
     [
-        'name' => 'local',
+        'name' => 'John Doe',
         'service'=>'standard',
+        'type' => 'individual',
         'address' => [
             'line1' => '1 Main Street',
             // 'line2' => , //uncomment if you have one
@@ -89,6 +98,31 @@ $user->cards()->create([
             'country' => 'GB',
         ]
     ]]);
+```
+
+Another way to create cards
+
+```php
+    $user->cards->virtual()->create();
+```
+
+Or
+
+```php
+    $user->cards
+        ->physical()
+        ->standard()
+        ->individual()
+        ->shipping([
+            'line1' => '1 Main Street',
+            // 'line2' => , //uncomment if you have one
+            'city' => 'New York',
+            'state' => 'NY',
+            'postal_code' => '10001',
+            'country' => 'GB',
+        ])
+        ->name('John Doe')
+        ->create();
 ```
 
 ### Testing
